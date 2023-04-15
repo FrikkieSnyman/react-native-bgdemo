@@ -6,21 +6,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {getBackgroundImage, getMotivationalMessage} from '../util/openAi';
-import {
-  getStoredImageUrl,
-  getStoredMessage,
-  storeImageUrl,
-  storeMessage,
-} from '../util/mmkv';
 
 const mock = true;
 export const Message = ({stepsToday}: {stepsToday: number}) => {
-  const [message, setMessage] = React.useState<string | undefined>(
-    getStoredMessage(),
-  );
-  const [imageUrl, setImageUrl] = React.useState<string | undefined>(
-    getStoredImageUrl(),
-  );
+  const [message, setMessage] = React.useState<string>();
+  const [imageUrl, setImageUrl] = React.useState<string>();
 
   React.useEffect(() => {
     const getAndSetMessage = async () => {
@@ -33,7 +23,6 @@ export const Message = ({stepsToday}: {stepsToday: number}) => {
         return;
       }
       setMessage(motivationalMessage);
-      storeMessage(motivationalMessage);
     };
     getAndSetMessage().catch(console.error);
   }, [stepsToday]);
@@ -46,7 +35,6 @@ export const Message = ({stepsToday}: {stepsToday: number}) => {
         return;
       }
       setImageUrl(image);
-      storeImageUrl(image);
     };
     getAndSetImageUrl().catch(console.error);
   }, []);
