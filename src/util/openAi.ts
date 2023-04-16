@@ -7,6 +7,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export const getMotivationalMessage = async (steps: number, mock = true) => {
+  console.log('Requesting motiviation message from ChatGPT');
   if (mock) {
     return `Look at you go. ${steps} steps. That's like, so inspiring. #goals`;
   }
@@ -29,12 +30,13 @@ function generatePrompt(steps: number, goal: number = 10000) {
 }
 
 export const getBackgroundImage = async (mock = true) => {
+  console.log('Requesting background image from OpenAI');
   if (mock) {
     return 'https://placehold.co/1024x1024.png';
   }
   const response = await openai.createImage({
     prompt:
-      'abstract 3 layers of waves on a dark background with light refracting through it, very cool subtle minimal dark illustration, purple light leak with subtle highlights',
+      'abstract 3 layers of waves on a dark (colour #222) background with with light refracting through it, very cool subtle minimal dark illustration, purple light leak with subtle highlights',
     n: 1,
     size: '256x256',
   });

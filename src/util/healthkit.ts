@@ -24,14 +24,19 @@ export const initHealthKit = () => {
   });
 };
 
-export const getStepCount = () => {
+export const sendStepsToServer = async (steps: number) => {
+  // stub
+  console.log(`Sending ${steps} steps to server`);
+};
+
+export const getAndSyncStepCount = () => {
   return new Promise<number>((resolve, reject) => {
-    /* Get step count */
+    console.log('Retrieving step count from HealthKit');
     AppleHealthKit.getStepCount({}, (error, results) => {
       if (error) {
-        console.error('[ERROR] Cannot get step count!');
         reject(error);
       }
+      sendStepsToServer(results.value);
       resolve(results.value);
     });
   });

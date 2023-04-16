@@ -10,33 +10,21 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Message} from './src/components/Message';
-import {getStepCount, initHealthKit} from './src/util/healthkit';
-
+import {getAndSyncStepCount, initHealthKit} from './src/util/healthkit';
+import {AppStateWrapper} from './src/components/AppStateWrapper';
 console.log('registering listeners');
 
 new NativeEventEmitter(NativeModules.AppleHealthKit).addListener(
   'healthKit:StepCount:new',
   async () => {
-    console.log('--> StepCount: observer triggered');
-  },
-);
-new NativeEventEmitter(NativeModules.AppleHealthKit).addListener(
-  'healthKit:StepCount:setup:success',
-  async () => {
-    console.log('--> StepCount: observer success');
+    await getAndSyncStepCount();
   },
 );
 
 new NativeEventEmitter(NativeModules.AppleHealthKit).addListener(
-  'healthKit:Workout:new',
+  'healthKit:StepCount:setup:success',
   async () => {
-    console.log('--> Workout: observer triggered');
-  },
-);
-new NativeEventEmitter(NativeModules.AppleHealthKit).addListener(
-  'healthKit:Workout:setup:success',
-  async () => {
-    console.log('--> Workout: observer success');
+    console.log('--> StepCount: observer success');
   },
 );
 
@@ -45,21 +33,23 @@ function App(): JSX.Element {
   useEffect(() => {
     const getAndSetStepCounts = async () => {
       await initHealthKit();
-      const steps = await getStepCount();
+      const steps = await getAndSyncStepCount();
       setStepsToday(steps);
     };
     getAndSetStepCounts().catch(console.error);
   }, []);
 
   return (
-    <SafeAreaView
-      style={[styles.backgroundStyle, styles.fullscreen, styles.center]}>
-      <StatusBar
-        barStyle={'light-content'}
-        backgroundColor={styles.backgroundStyle.backgroundColor}
-      />
-      {stepsToday !== undefined && <Message stepsToday={stepsToday} />}
-    </SafeAreaView>
+    <AppStateWrapper>
+      <SafeAreaView
+        style={[styles.backgroundStyle, styles.fullscreen, styles.center]}>
+        <StatusBar
+          barStyle={'light-content'}
+          backgroundColor={styles.backgroundStyle.backgroundColor}
+        />
+        {stepsToday !== undefined && <Message stepsToday={stepsToday} />}
+      </SafeAreaView>
+    </AppStateWrapper>
   );
 }
 
